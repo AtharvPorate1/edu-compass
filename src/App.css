@@ -1,0 +1,179 @@
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9; /* Light gray background */
+}
+
+.input-container {
+  text-align: center;
+  animation: fadeInUp 0.5s ease; /* Fade in animation */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-container input {
+  width: 300px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 18px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-container input:focus {
+  border-color: #3498db; /* Highlight input on focus */
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  animation: fadeIn 0.5s ease; /* Fade in animation */
+}
+
+.options button {
+  padding: 12px 24px;
+  margin: 0 10px;
+  background-color: #3498db; /* Blue buttons */
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s;
+}
+
+.options button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+.options button.selected {
+  background-color: #2ecc71; /* Green for selected option */
+}
+
+input[type='submit'] {
+  background-color: #2ecc71; /* Green submit button */
+  color: white;
+  padding: 14px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 300px; /* Match input field width */
+  font-size: 18px;
+  opacity: 0.9;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+input[type='submit']:hover {
+  background-color: #27ae60; /* Darker green on hover */
+  transform: translateY(-2px);
+}
+
+.submitted-container {
+  text-align: center;
+}
+
+.submitted-container p {
+  margin-bottom: 10px;
+}
+.submit-button {
+  background-color: #2ecc71;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9; /* Light gray background */
+}
+
+.input-container {
+  text-align: center;
+  transition: transform 0.5s ease, opacity 0.5s ease; /* Transition for transform and opacity properties */
+}
+
+.input-container.animate {
+  transform: translateY(-50vh); /* Move input container to the top of the screen */
+   /* Hide input container */
+}
+
+.submitted-container {
+  text-align: center;
+  animation: fadeInUp 0.5s ease; /* Fade in animation */
+}
+
+.submitted-title {
+  display: flex; /* Align text side by side */
+  justify-content: center;
+  font-size: 36px; /* Increase font size for title */
+  font-weight: bold; /* Make title bold */
+  margin-top: 20px;
+  gap: 1rem;
+  font-family:  Arial, sans-serif;
+}
+
+
+
+.centered-box {
+  width: 100vw; /* 70% of viewport width */
+  height: 85vh; /* 70% of viewport height */
+  margin: 50px auto; /* Center the box */
+  border: 2px solid #000; /* Black solid border */
+}
+
+
+.link-card {
+  display: flex;
+  align-items: center; /* Center content vertically */
+  padding: 10px;
+  margin: 10px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.link-icon {
+  margin-right: 10px; /* Add space between icon and text */
+  font-size: 20px; /* Adjust icon size */
+}
+
+.link-text {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+a{
+  text-decoration: none;
+  color: #333;
+}
