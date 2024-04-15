@@ -1,6 +1,7 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import Chatbot from './Chatbot'; // Import the Chatbot component
 
 function App() {
   const [inputText, setInputText] = useState('');
@@ -10,6 +11,7 @@ function App() {
   const [loadingLinks, setLoadingLinks] = useState(false);
   const [loadingVideos, setLoadingVideos] = useState(false);
   const [displayVideos, setDisplayVideos] = useState(true);
+  const [showChatbot, setShowChatbot] = useState(false); // State to toggle chatbot
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
@@ -21,7 +23,6 @@ function App() {
       .then(response => {
         const linksArray = response.data.split('\n').filter(link => link.trim() !== '');
         setLinks(linksArray);
-        console.log("links are there")
         setSubmitted(true);
         setLoadingLinks(false);
       })
@@ -50,21 +51,25 @@ function App() {
     setDisplayVideos(!displayVideos);
   };
 
+  const toggleChatbot = () => {
+    setShowChatbot(!showChatbot);
+  };
+
   return (
     <div className={`App ${submitted ? 'submitted' : ''}`}>
       <div className="input-container">
-  <h1>Edu-Compass</h1>
-  <input
-    type="text"
-    value={inputText}
-    onChange={handleInputChange}
-    placeholder="Type anything..."
-  />
-  <br /> {/* Add line break */}
-  <button onClick={handleSubmit} className="submit-button">
-    {loadingLinks ? 'Loading...' : 'Submit'}
-  </button>
-</div>
+        <h1>Edu-Compass</h1>
+        <input
+          type="text"
+          value={inputText}
+          onChange={handleInputChange}
+          placeholder="Type anything..."
+        />
+        <br /> {/* Add line break */}
+        <button onClick={handleSubmit} className="submit-button">
+          {loadingLinks ? 'Loading...' : 'Submit'}
+        </button>
+      </div>
       {submitted && (
         <div className="submitted-container">
           <div className="toggle-container">
@@ -72,46 +77,54 @@ function App() {
             <button onClick={toggleDisplay} className="toggle-button">
               {displayVideos ? 'Show Links' : 'Show Videos'}
             </button>
+            <button onClick={toggleChatbot} className="toggle-button">
+              {showChatbot ? 'Hide Chatbot' : 'Show Chatbot'}
+            </button>
           </div>
-          {displayVideos ? (
-            <div className="videos-container">
-              <h3>Videos</h3>
-              {loadingVideos ? (
-                <p>Loading videos...</p>
-              ) : (
-                <div className="video-cards">
-                  {videos.map((video, index) => (
-                    <div key={index} className="video-card">
-                      <a href={`https://www.youtube.com/watch?v=${video.id.videoId}`} target="_blank" rel="noopener noreferrer">
-                        <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} />
-                        <div className="video-info">
-                          <h4 className="video-title">{video.snippet.title}</h4>
-                          <p className="video-channel">{video.snippet.channelTitle}</p>
+          {showChatbot ? (
+            <Chatbot inputText={inputText} />
+          ) : (
+            <>
+              {displayVideos ? (
+                <div className="videos-container">
+                  <h3>Videos</h3>
+                  {loadingVideos ? (
+                    <p>Loading videos...</p>
+                  ) : (
+                    <div className="video-cards">
+                      {videos.map((video, index) => (
+                        <div key={index} className="video-card">
+                          <a href={`https://www.youtube.com/watch?v=${video.id.videoId}`} target="_blank" rel="noopener noreferrer">
+                            <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} />
+                            <div className="video-info">
+                              <h4 className="video-title">{video.snippet.title}</h4>
+                              <p className="video-channel">{video.snippet.channelTitle}</p>
+                            </div>
+                          </a>
                         </div>
-                      </a>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                </div>
+              ) : (
+                <div className="links-container">
+                  <h3>Links</h3>
+                  {links.map((link, index) => {
+                    const match = link.match(/\[(.*?)\]\((.*?)\)/);
+                    const extractedLink = match ? match[2] : link;
+
+                    return (
+                      <div key={index} className="link-card">
+                        <a href={extractedLink.substring(3)} target="_blank" rel="noopener noreferrer">
+                          <span className="link-icon">🔗</span>
+                          <span className="link-text">{extractedLink}</span>
+                        </a>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
-            </div>
-          ) : (
-            <div className="links-container">
-              <h3>Links</h3>
-              {links.map((link, index) => {
-                // Extracting the actual link from markdown format if present
-                const match = link.match(/\[(.*?)\]\((.*?)\)/);
-                const extractedLink = match ? match[2] : link;
-
-                return (
-                  <div key={index} className="link-card">
-                    <a href={extractedLink.substring(3)} target="_blank" rel="noopener noreferrer">
-                      <span className="link-icon">🔗</span>
-                      <span className="link-text">{extractedLink}</span>
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
+            </>
           )}
         </div>
       )}
