@@ -9,7 +9,7 @@ function Chatbot({ inputText }) {
 
   const handleChatbotRequest = () => {
     setLoading(true);
-    axios.get(`http://localhost:3000/generate?prompt=${userInput}`)
+    axios.get(`https://edu-compass-backend.onrender.com/generate?prompt=${userInput}`)
       .then(response => {
         setChatbotResponse(response.data);
         setLoading(false);

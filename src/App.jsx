@@ -19,7 +19,7 @@ function App() {
 
   const handleSubmit = () => {
     setLoadingLinks(true);
-    axios.get(`http://localhost:3000/generate?prompt=Only return 5 website-links where I can learn the topics ${inputText}`)
+    axios.get(`https://edu-compass-backend.onrender.com/generate?prompt=Only return 5 website-links where I can learn the topics ${inputText}`)
       .then(response => {
         const linksArray = response.data.split('\n').filter(link => link.trim() !== '');
         setLinks(linksArray);
@@ -35,10 +35,12 @@ function App() {
   useEffect(() => {
     if (submitted) {
       setLoadingVideos(true);
-      axios.get(`http://localhost:3000/searchVideos?q=learn ${inputText} full course`)
+      axios.get(`https://edu-compass-backend.onrender.com/searchVideos?q=learn ${inputText} full course`)
         .then(response => {
           setVideos(response.data.slice(0, 6)); // Limiting to 6 videos
           setLoadingVideos(false);
+          console.log("videos are fetched");
+          console.log(response.data);
         })
         .catch(error => {
           console.error('Error fetching videos:', error);
