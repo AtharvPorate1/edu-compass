@@ -19,14 +19,28 @@ function App() {
 
   const handleSubmit = () => {
     setLoadingLinks(true);
-    axios.get(`http://localhost:3000/generate?prompt=Only return 5 website-links where I can learn the topics ${inputText}`)
-      .then(response => {
-        const linksArray = response.data.split('\n').filter(link => link.trim() !== '');
+    axios
+      .get(
+        `http://localhost:3000/generate?prompt=Only return 5 website-links where I can learn the topics ${inputText}`
+      )
+      .then((response) => {
+        // Ensure the links are formatted correctly
+        const linksArray = response.data
+          .split('\n')
+          .filter((link) => link.trim() !== '')
+          .map((link) => {
+            // Extract the link and ensure it starts with http:// or https://
+            const match = link.match(/\[(.*?)\]\((.*?)\)/);
+            const extractedLink = match ? match[2] : link;
+            return extractedLink.startsWith('http')
+              ? extractedLink
+              : `http://${extractedLink}`;
+          });
         setLinks(linksArray);
         setSubmitted(true);
         setLoadingLinks(false);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching links:', error);
         setLoadingLinks(false);
       });
@@ -35,12 +49,13 @@ function App() {
   useEffect(() => {
     if (submitted) {
       setLoadingVideos(true);
-      axios.get(`http://localhost:3000/searchVideos?q=learn ${inputText} full course`)
-        .then(response => {
+      axios
+        .get(`http://localhost:3000/searchVideos?q=learn ${inputText} full course`)
+        .then((response) => {
           setVideos(response.data.slice(0, 6)); // Limiting to 6 videos
           setLoadingVideos(false);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching videos:', error);
           setLoadingVideos(false);
         });
@@ -94,11 +109,22 @@ function App() {
                     <div className="video-cards">
                       {videos.map((video, index) => (
                         <div key={index} className="video-card">
-                          <a href={`https://www.youtube.com/watch?v=${video.id.videoId}`} target="_blank" rel="noopener noreferrer">
-                            <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} />
+                          <a
+                            href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={video.snippet.thumbnails.medium.url}
+                              alt={video.snippet.title}
+                            />
                             <div className="video-info">
-                              <h4 className="video-title">{video.snippet.title}</h4>
-                              <p className="video-channel">{video.snippet.channelTitle}</p>
+                              <h4 className="video-title">
+                                {video.snippet.title}
+                              </h4>
+                              <p className="video-channel">
+                                {video.snippet.channelTitle}
+                              </p>
                             </div>
                           </a>
                         </div>
@@ -109,19 +135,18 @@ function App() {
               ) : (
                 <div className="links-container">
                   <h3>Links</h3>
-                  {links.map((link, index) => {
-                    const match = link.match(/\[(.*?)\]\((.*?)\)/);
-                    const extractedLink = match ? match[2] : link;
-
-                    return (
-                      <div key={index} className="link-card">
-                        <a href={extractedLink.substring(3)} target="_blank" rel="noopener noreferrer">
-                          <span className="link-icon">🔗</span>
-                          <span className="link-text">{extractedLink}</span>
-                        </a>
-                      </div>
-                    );
-                  })}
+                  {links.map((link, index) => (
+                    <div key={index} className="link-card">
+                      <a
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="link-icon">🔗</span>
+                        <span className="link-text">{link}</span>
+                      </a>
+                    </div>
+                  ))}
                 </div>
               )}
             </>

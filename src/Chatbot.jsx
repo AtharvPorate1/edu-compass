@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Chatbot.css'; // Import CSS file for styling
 
-function Chatbot({ inputText }) {
-  const [chatbotResponse, setChatbotResponse] = useState('');
+function Chatbot() {
+  const [messagePairs, setMessagePairs] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChatbotRequest = () => {
     setLoading(true);
+    const userMessage = `YOU: ${userInput}`;
     axios.get(`http://localhost:3000/generate?prompt=${userInput}`)
-      .then(response => {
-        setChatbotResponse(response.data);
+      .then((response) => {
+        const chatbotMessage = `CHATBOT: ${response.data}`;
+        setMessagePairs((prevPairs) => [
+          ...prevPairs,
+          { user: userMessage, chatbot: chatbotMessage },
+        ]);
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching chatbot response:', error);
         setLoading(false);
       });
@@ -26,41 +31,38 @@ function Chatbot({ inputText }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleChatbotRequest();
+    if (userInput.trim() !== '') {
+      handleChatbotRequest();
+      setUserInput('');
+    }
   };
 
-  // Function to convert markdown to HTML
   const convertMarkdownToHtml = (markdownText) => {
-    // Replace markdown syntax with corresponding HTML tags
-    let htmlText = markdownText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
-    htmlText = htmlText.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
-    htmlText = htmlText.replace(/`(.*?)`/g, '<code>$1</code>'); // Code
-
+    let htmlText = markdownText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    htmlText = htmlText.replace(/^\*\*([^:]+):\*\*$/gm, '<br><strong>$1:</strong><br>');
+    htmlText = htmlText.replace(/^\* ([^\*]+)/gm, '<li>$1</li>');
+    htmlText = htmlText.replace(/(<li>[^<]+<\/li>)/gs, '<ul>$1</ul>');
     return htmlText;
   };
 
   return (
     <div className="chat-container">
       <div className="chat-messages">
-        {chatbotResponse && (
-          <div className="chat-message">
-            <span className="chat-message-sender">Chatbot:</span>
-            {/* Convert markdown response to HTML */}
-            <span dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(chatbotResponse) }}></span>
+        {messagePairs.map((pair, index) => (
+          <div key={index} className="chat-message-pair">
+            <div className="chat-message">
+              <span className="chat-message-sender">{pair.user}</span>
+            </div>
+            <div className="chat-message">
+              <span dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(pair.chatbot) }}></span>
+            </div>
+            <div className="blank-line"></div>
           </div>
-        )}
+        ))}
       </div>
       <form onSubmit={handleSubmit} className="input-form">
-        <input
-          type="text"
-          value={userInput}
-          onChange={handleInputChange}
-          placeholder="Enter your message..."
-          className="input-field"
-        />
-        <button type="submit" disabled={loading} className="send-button">
-          {loading ? 'Loading...' : 'Send'}
-        </button>
+        <input type="text" value={userInput} onChange={handleInputChange} placeholder="Enter your message..." className="input-field"/>
+        <button type="submit" disabled={loading} className="send-button">{loading ? 'Loading...' : 'Send'}</button>
       </form>
     </div>
   );
