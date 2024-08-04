@@ -9,14 +9,9 @@ function Chatbot() {
 
   const handleChatbotRequest = () => {
     setLoading(true);
-    const userMessage = `YOU: ${userInput}`;
     axios.get(`http://localhost:3000/generate?prompt=${userInput}`)
-      .then((response) => {
-        const chatbotMessage = `CHATBOT: ${response.data}`;
-        setMessagePairs((prevPairs) => [
-          ...prevPairs,
-          { user: userMessage, chatbot: chatbotMessage },
-        ]);
+      .then(response => {
+        setChatbotResponse(response.data);
         setLoading(false);
       })
       .catch((error) => {

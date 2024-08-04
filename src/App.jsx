@@ -19,23 +19,9 @@ function App() {
 
   const handleSubmit = () => {
     setLoadingLinks(true);
-    axios
-      .get(
-        `http://localhost:3000/generate?prompt=Only return 5 website-links where I can learn the topics ${inputText}`
-      )
-      .then((response) => {
-        // Ensure the links are formatted correctly
-        const linksArray = response.data
-          .split('\n')
-          .filter((link) => link.trim() !== '')
-          .map((link) => {
-            // Extract the link and ensure it starts with http:// or https://
-            const match = link.match(/\[(.*?)\]\((.*?)\)/);
-            const extractedLink = match ? match[2] : link;
-            return extractedLink.startsWith('http')
-              ? extractedLink
-              : `http://${extractedLink}`;
-          });
+    axios.get(`http://localhost:3000/generate?prompt=Only return 5 website-links where I can learn the topics ${inputText}`)
+      .then(response => {
+        const linksArray = response.data.split('\n').filter(link => link.trim() !== '');
         setLinks(linksArray);
         setSubmitted(true);
         setLoadingLinks(false);
@@ -49,11 +35,12 @@ function App() {
   useEffect(() => {
     if (submitted) {
       setLoadingVideos(true);
-      axios
-        .get(`http://localhost:3000/searchVideos?q=learn ${inputText} full course`)
-        .then((response) => {
+      axios.get(`http://localhost:3000/searchVideos?q=learn ${inputText} full course`)
+        .then(response => {
           setVideos(response.data.slice(0, 6)); // Limiting to 6 videos
           setLoadingVideos(false);
+          console.log("videos are fetched");
+          console.log(response.data);
         })
         .catch((error) => {
           console.error('Error fetching videos:', error);
