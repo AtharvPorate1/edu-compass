@@ -6,12 +6,19 @@ function Chatbot() {
   const [messagePairs, setMessagePairs] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [chatbotResponse, setChatbotResponse] = useState(''); // Define state for chatbot response
 
   const handleChatbotRequest = () => {
     setLoading(true);
+    const userMessage = `YOU: ${userInput}`;
     axios.get(`http://localhost:3000/generate?prompt=${userInput}`)
-      .then(response => {
-        setChatbotResponse(response.data);
+      .then((response) => {
+        const chatbotMessage = `CHATBOT: ${response.data}`;
+        setMessagePairs((prevPairs) => [
+          ...prevPairs,
+          { user: userMessage, chatbot: chatbotMessage },
+        ]);
+        setChatbotResponse(response.data); // Set chatbot response
         setLoading(false);
       })
       .catch((error) => {
@@ -36,7 +43,7 @@ function Chatbot() {
     let htmlText = markdownText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     htmlText = htmlText.replace(/^\*\*([^:]+):\*\*$/gm, '<br><strong>$1:</strong><br>');
     htmlText = htmlText.replace(/^\* ([^\*]+)/gm, '<li>$1</li>');
-    htmlText = htmlText.replace(/(<li>[^<]+<\/li>)/gs, '<ul>$1</ul>');
+    htmlText = htmlText.replace(/(<li>[^<]+<\/li>)+/gs, '<ul>$&</ul>');
     return htmlText;
   };
 
